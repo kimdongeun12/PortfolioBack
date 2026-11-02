@@ -1,0 +1,46 @@
+package com.portfolio.controller;
+
+import com.portfolio.dto.VisitRequestDto;
+import com.portfolio.dto.VisitStatsResponseDto;
+import com.portfolio.service.VisitService;
+import com.portfolio.util.ClientInfoResolver;
+import jakarta.servlet.http.HttpServletRequest;
+import com.portfolio.auth.AdminOnly;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+
+/**
+ * 방문 기록 REST API
+ *
+ * POST /api/visits                                  방문 기록 (프론트에서 페이지 이동 시 호출)
+ * [관리자 전용] GET  /api/visits/stats?from=2026-10-01&to=2026-10-31   기간 통계 (기본: 최근 30일)
+ */
+@RestController
+@RequestMapping("/api/visits")
+@RequiredArgsConstructor
+public class VisitController {
+
+    private final VisitService visitService;
+    private final ClientInfoResolver clientInfoResolver;
+
+    @PostMapping
+    public ResponseEntity<Void> record(@Valid @RequestBody VisitRequestDto requestDto, HttpServletRequest request) {
+        visitService.record(requestDto, clientInfoResolver.getIpHash(request), clientInfoResolver.getUserAgent(request));
+        return ResponseEntity.noContent().build();
+    }
+
+    @AdminOnly
+    @GetMapping("/stats")
+    public ResponseEntity<VisitStatsResponseDto> stats(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        LocalDate end = (to != null) ? to : LocalDate.now();
+        LocalDate start = (from != null) ? from : end.minusDays(29);
+        return ResponseEntity.ok(visitService.getStats(start, end));
+    }
+}

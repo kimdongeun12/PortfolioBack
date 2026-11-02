@@ -1,5 +1,6 @@
 package com.portfolio.service;
 
+import com.portfolio.domain.ProjectType;
 import com.portfolio.dto.ProjectRequestDto;
 import com.portfolio.dto.ProjectResponseDto;
 
@@ -11,8 +12,8 @@ import java.util.List;
  */
 public interface ProjectService {
 
-    /** 전체 목록 조회 */
-    List<ProjectResponseDto> findAll();
+    /** 목록 조회 (type 이 null 이면 전체) */
+    List<ProjectResponseDto> findAll(ProjectType type);
 
     /** 단건 조회 */
     ProjectResponseDto findById(Long id);
@@ -23,6 +24,6 @@ public interface ProjectService {
     /** 수정 */
     ProjectResponseDto update(Long id, ProjectRequestDto requestDto);
 
-    /** 삭제 */
+    /** 삭제 (숨김 처리) */
     void delete(Long id);
 }
