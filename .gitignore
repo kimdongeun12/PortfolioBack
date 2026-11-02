@@ -36,3 +36,11 @@ build/
 application-local.yml
 .env
 *.env
+
+### IntelliJ (Gradle 새로고침 시 자동 생성) ###
+.idea/modules.xml
+.idea/modules/
+*.iml
+
+### 업로드 이미지 (로컬 저장) ###
+uploads/

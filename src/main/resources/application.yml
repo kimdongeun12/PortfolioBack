@@ -15,3 +15,43 @@ spring:
 
   jpa:
     open-in-view: false
+    hibernate:
+      # 테이블 생성/변경은 Flyway가 담당하고, JPA는 엔티티와 테이블 구조가 맞는지 검사만 합니다.
+      ddl-auto: validate
+    properties:
+      hibernate:
+        # 연관 엔티티/컬렉션(기술 스택, 경력)을 IN 쿼리로 묶어서 조회 (N+1 방지)
+        default_batch_fetch_size: 100
+
+  flyway:
+    enabled: true
+    # 이 폴더의 V{번호}__{설명}.sql 파일을 번호 순서대로 실행합니다.
+    locations: classpath:db/migration
+
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
+# 애플리케이션 설정 (운영에서는 환경변수로 덮어쓰기)
+app:
+  upload:
+    # 이미지 저장 폴더 (프로젝트 실행 위치 기준) / 접근 URL 경로
+    dir: ${UPLOAD_DIR:./uploads}
+    url-prefix: /uploads
+  # IP 해시용 salt — 운영에서는 반드시 환경변수 IP_HASH_SALT 로 임의의 긴 문자열을 넣으세요
+  ip-hash-salt: ${IP_HASH_SALT:local-dev-salt}
+  admin:
+    # 관리자 비밀번호 — 로컬은 application-local.yml, 운영은 환경변수 ADMIN_PASSWORD 로 설정 (비어 있으면 로그인 불가)
+    password: ${ADMIN_PASSWORD:}
+    # 토큰 서명 키 (32자 이상) — 비어 있으면 실행할 때마다 임의 생성 (재시작 시 로그아웃)
+    jwt-secret: ${JWT_SECRET:}
+    token-valid-hours: ${ADMIN_TOKEN_HOURS:12}
+    # 관리자 댓글에 표시할 닉네임
+    nickname: ${ADMIN_NICKNAME:작성자}
+    # 쿠키 옵션 — 운영(HTTPS)에서는 secure: true
+    cookie-secure: ${ADMIN_COOKIE_SECURE:false}
+    cookie-same-site: ${ADMIN_COOKIE_SAME_SITE:Lax}
+  cors:
+    # 프론트 주소 (여러 개는 콤마로 구분)
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:5173}

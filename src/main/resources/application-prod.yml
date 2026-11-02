@@ -4,3 +4,9 @@ spring:
     hibernate:
       ddl-auto: validate   # 운영에서는 테이블 자동 변경 금지
     show-sql: false
+
+# 관리자 쿠키는 HTTPS 에서만 전송
+# 비밀번호·서명키는 서버 환경변수 ADMIN_PASSWORD / JWT_SECRET 로 주입
+app:
+  admin:
+    cookie-secure: ${ADMIN_COOKIE_SECURE:true}
