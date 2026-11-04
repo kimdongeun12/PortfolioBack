@@ -21,18 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-/**
- * 블로그 REST API
- *
- * GET  /api/blogs                 공개 글 목록 (?page=0&size=10&tech=React)
- * GET  /api/blogs/{id}            상세 조회 (liked: 내가 좋아요 눌렀는지)
- * POST /api/blogs                 등록
- * PUT  /api/blogs/{id}            수정
- * POST /api/blogs/{id}/delete     삭제 (숨김 처리)
- * POST /api/blogs/{id}/like       좋아요 (IP 당 1회)
- *
- * [관리자 전용] 등록 · 수정 · 삭제 (임시저장 글 조회는 /api/admin/blogs)
- */
 @RestController
 @RequestMapping("/api/blogs")
 @RequiredArgsConstructor

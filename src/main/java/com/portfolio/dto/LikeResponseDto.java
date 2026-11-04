@@ -2,10 +2,6 @@ package com.portfolio.dto;
 
 import lombok.Getter;
 
-/**
- * 좋아요 응답 DTO
- * alreadyLiked 가 true 면 이미 누른 상태라 숫자가 늘지 않은 것입니다.
- */
 @Getter
 public class LikeResponseDto {
 

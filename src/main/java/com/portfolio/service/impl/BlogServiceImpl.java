@@ -77,7 +77,6 @@ public class BlogServiceImpl implements BlogService {
     @Override
     @Transactional
     public void delete(Long id) {
-        // 숨김 처리만 합니다. 댓글·좋아요·이미지는 글이 안 보이면 함께 노출되지 않습니다.
         getBlog(id).delete();
     }
 

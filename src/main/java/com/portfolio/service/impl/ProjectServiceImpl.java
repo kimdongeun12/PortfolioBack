@@ -57,7 +57,6 @@ public class ProjectServiceImpl implements ProjectService {
         validatePeriod(requestDto);
         Project project = getProject(id);
         Experience experience = getExperienceOrNull(requestDto.getExperienceId());
-        // save() 호출 없이 변경 감지(dirty checking)로 UPDATE 됩니다.
         project.update(
                 experience,
                 requestDto.getTitle(),
@@ -79,7 +78,6 @@ public class ProjectServiceImpl implements ProjectService {
     @Override
     @Transactional
     public void delete(Long id) {
-        // 숨김 처리만 합니다. 댓글·이미지는 프로젝트가 안 보이면 함께 노출되지 않습니다.
         getProject(id).delete();
     }
 

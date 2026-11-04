@@ -10,10 +10,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 프로젝트 응답 DTO
- * (experience, techStacks 는 지연 로딩이므로 트랜잭션 안(Service)에서 변환해야 합니다)
- */
 @Getter
 public class ProjectResponseDto {
 

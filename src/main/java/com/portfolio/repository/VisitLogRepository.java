@@ -10,10 +10,8 @@ import java.util.List;
 
 public interface VisitLogRepository extends JpaRepository<VisitLog, Long> {
 
-    /** 같은 세션이 같은 경로를 짧은 시간 안에 다시 보냈는지 (새로고침 중복 방지) */
     boolean existsBySessionIdAndPathAndVisitedAtAfter(String sessionId, String path, LocalDateTime after);
 
-    /** 일별 페이지뷰 / 순 방문자(IP 해시 기준) — [from, to) 구간 */
     @Query(value = """
             SELECT DATE_FORMAT(visited_at, '%Y-%m-%d') AS day,
                    COUNT(*)                            AS pageViews,

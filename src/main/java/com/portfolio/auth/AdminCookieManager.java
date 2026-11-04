@@ -8,12 +8,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Duration;
 
-/**
- * 관리자 토큰 쿠키 생성·읽기
- * - HttpOnly: 자바스크립트에서 읽을 수 없음 (XSS 로 토큰 탈취 방지)
- * - Secure: HTTPS 에서만 전송 (운영에서 true)
- * - SameSite: 다른 사이트에서 보낸 요청에 쿠키가 붙지 않게 함 (기본 Lax)
- */
 @Component
 public class AdminCookieManager {
 
@@ -36,7 +30,6 @@ public class AdminCookieManager {
         return baseCookie("").maxAge(0).build();
     }
 
-    /** 요청 쿠키에서 토큰 꺼내기 (없으면 null) */
     public String resolveToken(HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
         if (cookies == null) {

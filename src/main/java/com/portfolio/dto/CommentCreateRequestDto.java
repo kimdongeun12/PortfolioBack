@@ -6,11 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 댓글 작성 요청 DTO
- * - 최상위 댓글: targetType, targetId 필수 / parentId 없음
- * - 대댓글: parentId 만 있으면 됨 (대상은 부모 댓글에서 가져옴)
- */
 @Getter
 @NoArgsConstructor
 public class CommentCreateRequestDto {

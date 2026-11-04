@@ -17,9 +17,9 @@ public class ExperienceResponseDto {
     private final String role;
     private final String position;
     private final String responsibilities;
+    private final String achievements;
     private final LocalDate startDate;
     private final LocalDate endDate;
-    /** 재직중 여부 (endDate == null) */
     private final boolean current;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
@@ -33,6 +33,7 @@ public class ExperienceResponseDto {
         this.role = experience.getRole();
         this.position = experience.getPosition();
         this.responsibilities = experience.getResponsibilities();
+        this.achievements = experience.getAchievements();
         this.startDate = experience.getStartDate();
         this.endDate = experience.getEndDate();
         this.current = experience.isCurrent();

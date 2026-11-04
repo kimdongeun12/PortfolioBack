@@ -13,17 +13,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-/**
- * 이미지 REST API
- *
- * POST /api/images                                 업로드 (multipart/form-data: file, targetType, targetId)
- * GET  /api/images?targetType=BLOG&targetId=1      대상의 이미지 목록
- * POST /api/images/{id}/delete                     삭제 (숨김 처리)
- *
- * [관리자 전용] 업로드 · 삭제
- *
- * 업로드된 파일은 GET {백엔드주소}/uploads/... 로 접근합니다.
- */
 @RestController
 @RequestMapping("/api/images")
 @RequiredArgsConstructor

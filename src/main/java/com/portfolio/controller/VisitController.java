@@ -14,12 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 
-/**
- * 방문 기록 REST API
- *
- * POST /api/visits                                  방문 기록 (프론트에서 페이지 이동 시 호출)
- * [관리자 전용] GET  /api/visits/stats?from=2026-10-01&to=2026-10-31   기간 통계 (기본: 최근 30일)
- */
 @RestController
 @RequestMapping("/api/visits")
 @RequiredArgsConstructor

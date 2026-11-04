@@ -9,10 +9,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Duration;
 
-/**
- * 관리자 로그인 처리
- * 관리자 계정은 1개뿐이라 DB 없이 환경변수(ADMIN_PASSWORD)의 비밀번호와 비교합니다.
- */
 @Service
 public class AdminAuthService {
 
@@ -30,7 +26,6 @@ public class AdminAuthService {
         this.loginAttemptService = loginAttemptService;
     }
 
-    /** 비밀번호가 맞으면 토큰 발급 */
     public IssuedToken login(String password, String clientIp) {
         loginAttemptService.checkBlocked(clientIp);
 
@@ -54,7 +49,6 @@ public class AdminAuthService {
         return jwtProvider.getValidity();
     }
 
-    /** 두 값을 해시한 뒤 일정 시간 비교 (길이·내용으로 시간 차이가 나지 않게) */
     private boolean matches(String input, String expected) {
         if (input == null) {
             return false;

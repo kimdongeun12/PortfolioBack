@@ -5,9 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 댓글 수정 요청 DTO (작성 시 입력한 비밀번호 확인)
- */
 @Getter
 @NoArgsConstructor
 public class CommentUpdateRequestDto {

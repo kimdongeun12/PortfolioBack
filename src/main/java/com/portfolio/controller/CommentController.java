@@ -19,15 +19,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * 댓글 REST API (블로그·프로젝트 공용)
- *
- * GET  /api/comments?targetType=BLOG&targetId=1   목록 (대댓글 중첩)
- * POST /api/comments                              작성 (대댓글은 parentId 포함)
- * PUT  /api/comments/{id}                         수정 (비밀번호 필요)
- * POST /api/comments/{id}/delete                  삭제 — 숨김 처리 (비밀번호 필요)
- * POST /api/comments/{id}/like                    좋아요 (IP 당 1회)
- */
 @RestController
 @RequestMapping("/api/comments")
 @RequiredArgsConstructor

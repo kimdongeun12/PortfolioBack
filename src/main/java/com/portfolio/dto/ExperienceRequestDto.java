@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-/**
- * 경력 등록/수정 요청 DTO
- * 날짜는 "2023-06-20" 형식, 재직중이면 endDate 를 null 로 보냅니다.
- */
 @Getter
 @NoArgsConstructor
 public class ExperienceRequestDto {
@@ -38,10 +34,11 @@ public class ExperienceRequestDto {
 
     private String responsibilities;
 
+    private String achievements;
+
     @NotNull(message = "입사일은 필수입니다.")
     private LocalDate startDate;
 
-    /** null 이면 재직중 */
     private LocalDate endDate;
 
     public Experience toEntity() {
@@ -53,6 +50,7 @@ public class ExperienceRequestDto {
                 .role(role)
                 .position(position)
                 .responsibilities(responsibilities)
+                .achievements(achievements)
                 .startDate(startDate)
                 .endDate(endDate)
                 .build();

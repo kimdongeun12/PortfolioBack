@@ -19,13 +19,6 @@ import java.util.Base64;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * 관리자 로그인용 JWT (HS256) 발급·검증
- *
- * 토큰 형식: base64url(header).base64url(payload).base64url(HMAC-SHA256 서명)
- * - 서명은 서버만 아는 비밀키로 만들기 때문에, 내용을 바꾸면 검증에 실패합니다.
- * - header 는 고정값과 정확히 같아야 통과합니다. ("alg":"none" 같은 위조 방지)
- */
 @Component
 public class JwtProvider {
 
@@ -44,7 +37,6 @@ public class JwtProvider {
     private final Duration validity;
     private final Clock clock;
 
-    /** 생성자가 2개라 Spring 이 사용할 생성자를 @Autowired 로 지정 (아래 생성자는 테스트용) */
     @Autowired
     public JwtProvider(@Value("${app.admin.jwt-secret}") String secret,
                        @Value("${app.admin.token-valid-hours}") long validHours) {
@@ -53,7 +45,6 @@ public class JwtProvider {
 
     JwtProvider(String secret, Duration validity, Clock clock) {
         if (secret == null || secret.isBlank()) {
-            // 비밀키가 없으면 실행할 때마다 임의로 만듭니다. (서버 재시작 시 다시 로그인 필요)
             byte[] random = new byte[MIN_SECRET_BYTES];
             new SecureRandom().nextBytes(random);
             this.secret = random;
@@ -69,7 +60,6 @@ public class JwtProvider {
         this.clock = clock;
     }
 
-    /** 토큰 발급 */
     public IssuedToken createToken(String subject) {
         Instant now = clock.instant();
         Instant expiresAt = now.plus(validity);
@@ -79,7 +69,6 @@ public class JwtProvider {
         return new IssuedToken(unsigned + "." + ENCODER.encodeToString(sign(unsigned)), expiresAt);
     }
 
-    /** 서명·만료·subject 가 모두 맞으면 true */
     public boolean isValid(String token, String expectedSubject) {
         if (token == null || token.isBlank()) {
             return false;
@@ -91,7 +80,6 @@ public class JwtProvider {
         try {
             byte[] expected = sign(parts[0] + "." + parts[1]);
             byte[] actual = DECODER.decode(parts[2]);
-            // 길이·내용 비교에 걸리는 시간이 일정한 비교 (타이밍 공격 방지)
             if (!MessageDigest.isEqual(expected, actual)) {
                 return false;
             }
@@ -104,7 +92,6 @@ public class JwtProvider {
             return expectedSubject.equals(sub.group(1))
                     && clock.instant().getEpochSecond() < Long.parseLong(exp.group(1));
         } catch (IllegalArgumentException e) {
-            // base64 형식 오류, 숫자 변환 오류 등
             return false;
         }
     }

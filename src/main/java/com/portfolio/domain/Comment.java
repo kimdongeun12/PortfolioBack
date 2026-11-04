@@ -6,13 +6,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * 댓글 (comment 테이블) — 블로그·프로젝트 공용, 대댓글 1단계
- * - parentId 가 null 이면 최상위 댓글, 값이 있으면 대댓글
- * - 삭제는 isDeleted = true 로 숨김 처리 (대댓글은 유지)
- * - password 는 BCrypt 해시값
- * - isAdmin 이 true 면 어드민에서 작성한 댓글 (비밀번호로 수정·삭제 불가)
- */
 @Entity
 @Table(name = "comment")
 @Getter
@@ -67,7 +60,6 @@ public class Comment extends BaseTimeEntity {
         this.content = content;
     }
 
-    /** 숨김 처리 (물리 삭제하지 않음) */
     public void delete() {
         this.isDeleted = true;
     }

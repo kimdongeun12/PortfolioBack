@@ -9,13 +9,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-/**
- * @AdminOnly 가 붙은 API 요청을 검사합니다.
- *
- * 1) admin_token 쿠키가 유효한지 (없거나 만료 → 401)
- * 2) GET 이 아닌 요청은 X-Admin-Request: 1 헤더가 있는지 (없으면 403)
- *    → 다른 사이트의 form 전송은 커스텀 헤더를 붙일 수 없어서 CSRF 공격을 막을 수 있습니다.
- */
 @Component
 @RequiredArgsConstructor
 public class AdminAuthInterceptor implements HandlerInterceptor {
@@ -27,7 +20,6 @@ public class AdminAuthInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        // 정적 리소스, CORS preflight 등은 검사하지 않음
         if (!(handler instanceof HandlerMethod handlerMethod)) {
             return true;
         }

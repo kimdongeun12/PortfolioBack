@@ -12,11 +12,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-/**
- * - CORS: 프론트 도메인에서 /api/** 호출 허용 (DELETE 메서드는 사용하지 않음, 쿠키 포함 허용)
- * - 관리자 인증: @AdminOnly 가 붙은 API 를 AdminAuthInterceptor 가 검사
- * - 업로드 이미지: /uploads/** 요청을 업로드 폴더의 파일로 연결
- */
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {

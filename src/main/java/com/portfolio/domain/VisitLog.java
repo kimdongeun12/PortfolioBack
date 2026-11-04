@@ -10,9 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-/**
- * 방문 기록 (visit_log 테이블) — 페이지 이동 1번 = 1행
- */
 @Entity
 @Table(name = "visit_log")
 @Getter
@@ -36,7 +33,6 @@ public class VisitLog {
     @Column(length = 500)
     private String userAgent;
 
-    /** DB 타입이 CHAR(64) 라서 columnDefinition 을 맞춰줘야 validate 를 통과합니다. */
     @Column(columnDefinition = "CHAR(64)")
     private String ipHash;
 

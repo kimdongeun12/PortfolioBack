@@ -13,14 +13,10 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 프로젝트 등록/수정 요청 DTO
- */
 @Getter
 @NoArgsConstructor
 public class ProjectRequestDto {
 
-    /** 소속 경력 id (개인/사이드 프로젝트는 null) */
     private Long experienceId;
 
     @NotBlank(message = "제목은 필수입니다.")
@@ -35,7 +31,6 @@ public class ProjectRequestDto {
 
     private String responsibilities;
 
-    /** 마크다운 본문 */
     private String content;
 
     @NotNull(message = "프로젝트 종류는 필수입니다. (COMPANY / PERSONAL / SIDE)")
@@ -50,14 +45,11 @@ public class ProjectRequestDto {
 
     private LocalDate startDate;
 
-    /** null 이면 진행중 */
     private LocalDate endDate;
 
-    /** 기술 스택 이름 목록 (예: ["Vue", "TypeScript"]) — 없는 이름은 자동 등록 */
     @Size(max = 30, message = "기술 스택은 30개 이하로 입력하세요.")
     private List<String> techStacks = new ArrayList<>();
 
-    /** experience 는 Service 에서 experienceId 로 조회해서 넘겨줍니다. */
     public Project toEntity(Experience experience) {
         return Project.builder()
                 .experience(experience)

@@ -10,11 +10,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
 
-/**
- * 업로드 이미지 정보 (image 테이블)
- * 파일 자체는 업로드 폴더에 저장하고, DB 에는 접근 URL 만 저장합니다.
- * 삭제는 isDeleted = true 로 숨김 처리 (파일은 남아있음)
- */
 @Entity
 @Table(name = "image")
 @Getter
@@ -62,7 +57,6 @@ public class Image {
         this.fileSize = fileSize;
     }
 
-    /** 숨김 처리 (물리 삭제하지 않음) */
     public void delete() {
         this.isDeleted = true;
     }

@@ -10,10 +10,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HexFormat;
 import java.util.regex.Pattern;
 
-/**
- * 요청에서 클라이언트 정보(IP, User-Agent)를 꺼냅니다.
- * IP 는 원문을 저장하지 않고 salt + SHA-256 해시로만 저장합니다.
- */
 @Component
 public class ClientInfoResolver {
 
@@ -27,7 +23,6 @@ public class ClientInfoResolver {
         this.salt = salt;
     }
 
-    /** 프록시(Nginx, 로드밸런서) 뒤에서도 실제 사용자 IP 를 꺼냅니다. */
     public String getClientIp(HttpServletRequest request) {
         String xff = request.getHeader("X-Forwarded-For");
         if (xff != null && !xff.isBlank()) {
@@ -40,17 +35,14 @@ public class ClientInfoResolver {
         return request.getRemoteAddr();
     }
 
-    /** 요청 IP 의 해시값 (64자) */
     public String getIpHash(HttpServletRequest request) {
         return sha256(salt + getClientIp(request));
     }
 
-    /** User-Agent (DB 컬럼 길이 500자에 맞춰 자름) */
     public String getUserAgent(HttpServletRequest request) {
         return truncate(request.getHeader("User-Agent"), 500);
     }
 
-    /** 검색엔진 봇 / 스크립트 요청 여부 */
     public boolean isBot(String userAgent) {
         return userAgent == null || userAgent.isBlank() || BOT_PATTERN.matcher(userAgent).matches();
     }

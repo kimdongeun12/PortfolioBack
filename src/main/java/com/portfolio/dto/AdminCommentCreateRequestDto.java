@@ -6,11 +6,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * [관리자] 댓글 작성 요청 DTO (닉네임·비밀번호 없음)
- * - 최상위 댓글: targetType, targetId 필수
- * - 답글: parentId 만 있으면 됨
- */
 @Getter
 @NoArgsConstructor
 public class AdminCommentCreateRequestDto {

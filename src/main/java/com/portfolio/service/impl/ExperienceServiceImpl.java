@@ -52,6 +52,7 @@ public class ExperienceServiceImpl implements ExperienceService {
                 requestDto.getRole(),
                 requestDto.getPosition(),
                 requestDto.getResponsibilities(),
+                requestDto.getAchievements(),
                 requestDto.getStartDate(),
                 requestDto.getEndDate()
         );
@@ -61,7 +62,6 @@ public class ExperienceServiceImpl implements ExperienceService {
     @Override
     @Transactional
     public void delete(Long id) {
-        // 연결된 프로젝트는 그대로 두고 경력만 숨깁니다.
         getExperience(id).delete();
     }
 

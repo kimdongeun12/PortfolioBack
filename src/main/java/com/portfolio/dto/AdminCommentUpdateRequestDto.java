@@ -5,9 +5,6 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-/**
- * [관리자] 관리자 댓글 수정 요청 DTO
- */
 @Getter
 @NoArgsConstructor
 public class AdminCommentUpdateRequestDto {

@@ -11,15 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * [관리자 전용] 댓글 관리 API
- *
- * POST /api/admin/comments               관리자 댓글·답글 작성 (비밀번호 없음, '작성자' 표시)
- * PUT  /api/admin/comments/{id}          관리자 댓글 수정 (관리자가 쓴 댓글만)
- * POST /api/admin/comments/{id}/delete   아무 댓글이나 숨김 처리 (스팸·악성 댓글 정리용)
- *
- * 목록은 공개 API(GET /api/comments)를 그대로 사용합니다.
- */
 @AdminOnly
 @RestController
 @RequestMapping("/api/admin/comments")

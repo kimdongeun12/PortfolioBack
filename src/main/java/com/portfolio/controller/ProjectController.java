@@ -13,16 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 import java.util.List;
 
-/**
- * 프로젝트 REST API
- * [관리자 전용] 등록 · 수정 · 삭제
- *
- * GET  /api/projects               목록 조회 (?type=COMPANY|PERSONAL|SIDE 로 필터 가능)
- * GET  /api/projects/{id}          단건 조회
- * POST /api/projects               등록
- * PUT  /api/projects/{id}          수정
- * POST /api/projects/{id}/delete   삭제 (숨김 처리)
- */
 @RestController
 @RequestMapping("/api/projects")
 @RequiredArgsConstructor

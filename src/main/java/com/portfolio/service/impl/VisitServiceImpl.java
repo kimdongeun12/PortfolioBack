@@ -25,9 +25,7 @@ import java.util.Map;
 @Transactional(readOnly = true)
 public class VisitServiceImpl implements VisitService {
 
-    /** 같은 세션·같은 경로를 이 시간(초) 안에 다시 보내면 무시 (새로고침 중복 방지) */
     private static final long DUPLICATE_WINDOW_SECONDS = 10;
-    /** 통계 조회 최대 기간 (일) */
     private static final long MAX_STATS_DAYS = 366;
 
     private final VisitLogRepository visitLogRepository;
@@ -66,9 +64,8 @@ public class VisitServiceImpl implements VisitService {
         }
 
         LocalDateTime start = from.atStartOfDay();
-        LocalDateTime end = to.plusDays(1).atStartOfDay(); // to 날짜 포함
+        LocalDateTime end = to.plusDays(1).atStartOfDay();
 
-        // 일별 통계 → 방문 없는 날은 0 으로 채우기
         Map<LocalDate, DailyVisitStat> statByDate = new HashMap<>();
         for (DailyVisitStat stat : visitLogRepository.findDailyStats(start, end)) {
             statByDate.put(LocalDate.parse(stat.getDay()), stat);

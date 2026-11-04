@@ -12,7 +12,6 @@ public class ImageResponseDto {
     private final Long id;
     private final ImageTargetType targetType;
     private final Long targetId;
-    /** 접근 경로 (예: /uploads/2026/11/xxxx.png) — 프론트에서 백엔드 주소를 앞에 붙여 사용 */
     private final String url;
     private final String originalName;
     private final String mimeType;

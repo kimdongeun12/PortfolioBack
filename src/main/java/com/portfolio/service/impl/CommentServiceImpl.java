@@ -33,7 +33,6 @@ public class CommentServiceImpl implements CommentService {
     private final ProjectRepository projectRepository;
     private final PasswordEncoder passwordEncoder;
 
-    /** 관리자 댓글에 표시할 닉네임 */
     @Value("${app.admin.nickname}")
     private String adminNickname;
 
@@ -43,7 +42,6 @@ public class CommentServiceImpl implements CommentService {
 
         List<Comment> comments = commentRepository.findByTargetTypeAndTargetIdOrderByCreatedAtAscIdAsc(targetType, targetId);
 
-        // 부모 id 별 대댓글 묶기 (숨김 처리된 대댓글은 제외)
         Map<Long, List<CommentResponseDto>> repliesByParent = new LinkedHashMap<>();
         for (Comment comment : comments) {
             if (comment.isReply() && !comment.isDeleted()) {
@@ -58,7 +56,6 @@ public class CommentServiceImpl implements CommentService {
                 continue;
             }
             List<CommentResponseDto> replies = repliesByParent.getOrDefault(comment.getId(), List.of());
-            // 삭제된 댓글은 대댓글이 남아있을 때만 "삭제된 댓글입니다." 로 표시하고, 없으면 아예 숨김
             if (comment.isDeleted() && replies.isEmpty()) {
                 continue;
             }
@@ -94,7 +91,6 @@ public class CommentServiceImpl implements CommentService {
                 .targetId(placement.targetId())
                 .parentId(placement.parentId())
                 .nickname(adminNickname)
-                // 비밀번호 방식으로는 수정·삭제할 수 없도록 아무도 모르는 값의 해시를 저장
                 .password(passwordEncoder.encode(UUID.randomUUID().toString()))
                 .content(content)
                 .isAdmin(true)
@@ -114,19 +110,13 @@ public class CommentServiceImpl implements CommentService {
         return new CommentResponseDto(comment);
     }
 
-    /** 댓글이 달릴 위치 */
     private record Placement(CommentTargetType targetType, Long targetId, Long parentId) {
     }
 
-    /**
-     * - 대댓글(parentId 있음): 대상은 부모 댓글에서 복사, 깊이는 1단계로 제한
-     * - 최상위 댓글: targetType, targetId 필수
-     */
     private Placement resolvePlacement(CommentTargetType targetType, Long targetId, Long parentId) {
         if (parentId != null) {
             Comment parent = commentRepository.findByIdAndIsDeletedFalse(parentId)
                     .orElseThrow(() -> new NotFoundException("답글을 달 댓글을 찾을 수 없습니다. id=" + parentId));
-            // 대댓글에 답글을 달면 같은 최상위 댓글 아래에 붙입니다.
             Long rootId = parent.isReply() ? parent.getParentId() : parent.getId();
             validateTarget(parent.getTargetType(), parent.getTargetId());
             return new Placement(parent.getTargetType(), parent.getTargetId(), rootId);
@@ -169,7 +159,6 @@ public class CommentServiceImpl implements CommentService {
         return comment;
     }
 
-    /** 댓글 대상(블로그/프로젝트)이 존재하고 숨김 처리되지 않았는지 확인 */
     private void validateTarget(CommentTargetType targetType, Long targetId) {
         boolean exists = switch (targetType) {
             case BLOG -> blogRepository.existsByIdAndIsPublishedTrueAndIsDeletedFalse(targetId);

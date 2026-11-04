@@ -10,12 +10,6 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * 포트폴리오 프로젝트 엔티티 (project 테이블)
- * - experience 가 null 이면 개인/사이드 프로젝트
- * - endDate 가 null 이면 진행중
- * - 삭제는 isDeleted = true 로 숨김 처리
- */
 @Entity
 @Table(name = "project")
 @Getter
@@ -65,7 +59,6 @@ public class Project extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isDeleted;
 
-    /** 기술 스택 (project_tech 연결 테이블) */
     @ManyToMany
     @JoinTable(
             name = "project_tech",
@@ -92,7 +85,6 @@ public class Project extends BaseTimeEntity {
         this.endDate = endDate;
     }
 
-    /** 수정 로직은 엔티티 안에 두고, Service에서 호출합니다. (JPA 변경 감지) */
     public void update(Experience experience, String title, String summary, String role,
                        String responsibilities, String content, ProjectType type, String thumbnailUrl,
                        boolean isPinned, int sortOrder, LocalDate startDate, LocalDate endDate) {
@@ -110,13 +102,11 @@ public class Project extends BaseTimeEntity {
         this.endDate = endDate;
     }
 
-    /** 기술 스택 전체 교체 */
     public void changeTechStacks(Set<TechStack> techStacks) {
         this.techStacks.clear();
         this.techStacks.addAll(techStacks);
     }
 
-    /** 숨김 처리 (물리 삭제하지 않음) */
     public void delete() {
         this.isDeleted = true;
     }

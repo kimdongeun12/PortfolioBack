@@ -39,7 +39,6 @@ public class TechStackServiceImpl implements TechStackService {
             return new LinkedHashSet<>();
         }
 
-        // 공백 제거 + 대소문자 무시 중복 제거 (입력 순서 유지)
         Map<String, String> normalized = new LinkedHashMap<>();
         for (String name : names) {
             if (name == null || name.isBlank()) {
@@ -55,7 +54,6 @@ public class TechStackServiceImpl implements TechStackService {
             return new LinkedHashSet<>();
         }
 
-        // DB 콜레이션(utf8mb4_unicode_ci)이 대소문자를 구분하지 않으므로 "react" 로 "React" 도 조회됩니다.
         Map<String, TechStack> existing = new LinkedHashMap<>();
         for (TechStack techStack : techStackRepository.findByNameIn(normalized.values())) {
             existing.put(techStack.getName().toLowerCase(Locale.ROOT), techStack);

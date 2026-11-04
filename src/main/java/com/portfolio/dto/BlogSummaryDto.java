@@ -7,9 +7,6 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 블로그 목록용 DTO (본문 대신 앞부분 미리보기만 내려줍니다)
- */
 @Getter
 public class BlogSummaryDto {
 
@@ -20,7 +17,6 @@ public class BlogSummaryDto {
     private final String excerpt;
     private final String thumbnailUrl;
     private final int likeCount;
-    /** 공개 여부 (공개 목록에서는 항상 true, 관리자 목록에서 임시저장 구분용) */
     private final boolean published;
     private final List<String> techStacks;
     private final LocalDateTime createdAt;
@@ -39,15 +35,14 @@ public class BlogSummaryDto {
         this.createdAt = blog.getCreatedAt();
     }
 
-    /** 마크다운 기호·코드블록·이미지를 대략 걷어내고 앞부분만 자릅니다. */
     private static String toExcerpt(String markdown) {
         if (markdown == null) {
             return "";
         }
         String text = markdown
-                .replaceAll("(?s)```.*?```", " ")          // 코드 블록
-                .replaceAll("!\\[[^\\]]*\\]\\([^)]*\\)", " ")  // 이미지
-                .replaceAll("\\[([^\\]]*)\\]\\([^)]*\\)", "$1") // 링크는 텍스트만
+                .replaceAll("(?s)```.*?```", " ")
+                .replaceAll("!\\[[^\\]]*\\]\\([^)]*\\)", " ")
+                .replaceAll("\\[([^\\]]*)\\]\\([^)]*\\)", "$1")
                 .replaceAll("[#>*`_~|-]", " ")
                 .replaceAll("\\s+", " ")
                 .trim();

@@ -9,12 +9,6 @@ import lombok.NoArgsConstructor;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-/**
- * 블로그 글 (blog 테이블)
- * - isPublished = false 는 임시저장 (목록에 노출 안 됨)
- * - 삭제는 isDeleted = true 로 숨김 처리
- * - likeCount 는 likes 테이블의 집계 캐시 (LikeService 에서 증가)
- */
 @Entity
 @Table(name = "blog")
 @Getter
@@ -43,7 +37,6 @@ public class Blog extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isDeleted;
 
-    /** 기술 스택 (blog_tech 연결 테이블) */
     @ManyToMany
     @JoinTable(
             name = "blog_tech",
@@ -67,13 +60,11 @@ public class Blog extends BaseTimeEntity {
         this.isPublished = isPublished;
     }
 
-    /** 기술 스택 전체 교체 */
     public void changeTechStacks(Set<TechStack> techStacks) {
         this.techStacks.clear();
         this.techStacks.addAll(techStacks);
     }
 
-    /** 숨김 처리 (물리 삭제하지 않음) */
     public void delete() {
         this.isDeleted = true;
     }

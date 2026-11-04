@@ -30,7 +30,6 @@ import java.util.UUID;
 @Transactional(readOnly = true)
 public class ImageServiceImpl implements ImageService {
 
-    /** 허용 MIME 타입 → 저장 확장자 (SVG 는 스크립트를 넣을 수 있어 제외) */
     private static final Map<String, String> ALLOWED_TYPES = Map.of(
             "image/png", "png",
             "image/jpeg", "jpg",
@@ -57,13 +56,11 @@ public class ImageServiceImpl implements ImageService {
             throw new BadRequestException("업로드할 파일이 없습니다.");
         }
         String contentType = file.getContentType();
-        // Map.of 는 get(null) 에서 예외가 나므로 null 을 먼저 거릅니다.
         String extension = (contentType == null) ? null : ALLOWED_TYPES.get(contentType);
         if (extension == null) {
             throw new BadRequestException("png, jpg, gif, webp 이미지만 업로드할 수 있습니다.");
         }
 
-        // 저장 경로: {uploadDir}/2026/11/{uuid}.png
         LocalDate today = LocalDate.now();
         String subDir = String.format("%d/%02d", today.getYear(), today.getMonthValue());
         String fileName = UUID.randomUUID() + "." + extension;
@@ -105,7 +102,6 @@ public class ImageServiceImpl implements ImageService {
         image.delete();
     }
 
-    /** 대상(블로그/프로젝트)이 존재하고 숨김 처리되지 않았는지 확인 (임시저장 블로그도 허용) */
     private void validateTarget(ImageTargetType targetType, Long targetId) {
         boolean exists = switch (targetType) {
             case PROJECT -> projectRepository.existsByIdAndIsDeletedFalse(targetId);

@@ -29,7 +29,6 @@ public class LikeServiceImpl implements LikeService {
             return new LikeResponseDto(getLikeCount(targetType, targetId), true);
         }
 
-        // 동시에 같은 요청이 들어오면 uk_likes 유니크 키에 걸려 409 응답 (GlobalExceptionHandler)
         likesRepository.saveAndFlush(new Likes(targetType, targetId, ipHash));
         increaseLikeCount(targetType, targetId);
         return new LikeResponseDto(getLikeCount(targetType, targetId), false);

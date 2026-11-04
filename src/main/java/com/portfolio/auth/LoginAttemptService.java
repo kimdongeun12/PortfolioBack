@@ -9,13 +9,6 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-/**
- * 로그인 실패 횟수 제한 (비밀번호 무작위 대입 방지, 메모리 저장)
- *
- * - IP 별: 15분 안에 5번 틀리면 15분 잠금
- * - 전체: 15분 안에 20번 틀리면 15분 잠금
- *   (X-Forwarded-For 헤더를 바꿔가며 IP 제한을 우회하는 경우까지 막기 위함)
- */
 @Component
 public class LoginAttemptService {
 
@@ -36,7 +29,6 @@ public class LoginAttemptService {
         this.clock = clock;
     }
 
-    /** 잠겨 있으면 TooManyRequestsException */
     public void checkBlocked(String ip) {
         Instant now = clock.instant();
         for (String key : new String[]{ip, GLOBAL_KEY}) {
@@ -56,7 +48,6 @@ public class LoginAttemptService {
         record(GLOBAL_KEY, MAX_FAILURES_GLOBAL);
     }
 
-    /** 로그인 성공 시 해당 IP 기록 초기화 */
     public void recordSuccess(String ip) {
         attempts.remove(ip);
     }
@@ -89,7 +80,6 @@ public class LoginAttemptService {
             this.firstFailureAt = firstFailureAt;
         }
 
-        /** 기록 구간이 지났고 잠금도 풀렸으면 새로 셉니다. */
         private boolean isExpired(Instant now) {
             boolean windowPassed = !now.isBefore(firstFailureAt.plus(WINDOW));
             boolean unlocked = lockedUntil == null || !now.isBefore(lockedUntil);

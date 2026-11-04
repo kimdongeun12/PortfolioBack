@@ -7,9 +7,6 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * 블로그 상세 응답 DTO
- */
 @Getter
 public class BlogResponseDto {
 
@@ -18,7 +15,6 @@ public class BlogResponseDto {
     private final String content;
     private final String thumbnailUrl;
     private final int likeCount;
-    /** 현재 요청 IP 가 좋아요를 눌렀는지 */
     private final boolean liked;
     private final boolean published;
     private final List<String> techStacks;
