@@ -1,6 +1,7 @@
 package com.portfolio.auth;
 
-import com.portfolio.exception.UnauthorizedException;
+import com.portfolio.global.exception.UnauthorizedException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import java.time.Duration;
 public class AdminAuthService {
 
     static final String ADMIN_SUBJECT = "admin";
+    static final int MIN_PASSWORD_LENGTH = 12;
 
     private final String adminPassword;
     private final JwtProvider jwtProvider;
@@ -21,6 +23,9 @@ public class AdminAuthService {
     public AdminAuthService(@Value("${app.admin.password}") String adminPassword,
                             JwtProvider jwtProvider,
                             LoginAttemptService loginAttemptService) {
+        if (adminPassword != null && !adminPassword.isBlank() && adminPassword.length() < MIN_PASSWORD_LENGTH) {
+            throw new IllegalStateException("ADMIN_PASSWORD 는 " + MIN_PASSWORD_LENGTH + "자 이상이어야 합니다.");
+        }
         this.adminPassword = adminPassword;
         this.jwtProvider = jwtProvider;
         this.loginAttemptService = loginAttemptService;

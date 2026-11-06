@@ -1,7 +1,8 @@
 package com.portfolio.auth;
 
-import com.portfolio.exception.ForbiddenException;
-import com.portfolio.exception.UnauthorizedException;
+import com.portfolio.global.exception.ForbiddenException;
+import com.portfolio.global.exception.UnauthorizedException;
+
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

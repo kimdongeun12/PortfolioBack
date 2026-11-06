@@ -47,3 +47,11 @@ dependencies {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.named('bootJar') {
+    exclude '**/application-local.yml'
+}
+
+tasks.named('jar') {
+    enabled = false
+}

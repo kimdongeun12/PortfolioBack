@@ -1,0 +1,57 @@
+package com.portfolio.global.util;
+
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HexFormat;
+import java.util.regex.Pattern;
+
+@Component
+public class ClientInfoResolver {
+
+    private static final Pattern BOT_PATTERN =
+            Pattern.compile(".*(bot|crawler|spider|slurp|headless|preview|curl|wget|python-requests).*",
+                    Pattern.CASE_INSENSITIVE);
+
+    private final String salt;
+
+    public ClientInfoResolver(@Value("${app.ip-hash-salt}") String salt) {
+        this.salt = salt;
+    }
+
+    public String getClientIp(HttpServletRequest request) {
+        return request.getRemoteAddr();
+    }
+
+    public String getIpHash(HttpServletRequest request) {
+        return sha256(salt + getClientIp(request));
+    }
+
+    public String getUserAgent(HttpServletRequest request) {
+        return truncate(request.getHeader("User-Agent"), 500);
+    }
+
+    public boolean isBot(String userAgent) {
+        return userAgent == null || userAgent.isBlank() || BOT_PATTERN.matcher(userAgent).matches();
+    }
+
+    public static String truncate(String value, int maxLength) {
+        if (value == null) {
+            return null;
+        }
+        return value.length() > maxLength ? value.substring(0, maxLength) : value;
+    }
+
+    private String sha256(String value) {
+        try {
+            byte[] hash = MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hash);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("SHA-256 을 사용할 수 없습니다.", e);
+        }
+    }
+}

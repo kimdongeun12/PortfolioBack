@@ -1,6 +1,8 @@
 # 공통 설정 (GitHub에 공개됨 — 비밀값을 직접 쓰지 마세요)
 server:
   port: 8080
+  # Nginx/ALB 같은 내부 프록시가 넘겨준 X-Forwarded-For 만 신뢰 (외부에서 위조한 헤더는 무시)
+  forward-headers-strategy: ${FORWARD_HEADERS_STRATEGY:native}
 
 spring:
   profiles:
