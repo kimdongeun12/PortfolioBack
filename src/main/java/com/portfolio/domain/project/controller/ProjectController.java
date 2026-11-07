@@ -1,6 +1,7 @@
 package com.portfolio.domain.project.controller;
 
 import com.portfolio.auth.AdminOnly;
+import com.portfolio.domain.project.dto.ProjectOrderRequestDto;
 import com.portfolio.domain.project.dto.ProjectRequestDto;
 import com.portfolio.domain.project.dto.ProjectResponseDto;
 import com.portfolio.domain.project.entity.ProjectType;
@@ -24,6 +25,13 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<List<ProjectResponseDto>> findAll(@RequestParam(required = false) ProjectType type) {
         return ResponseEntity.ok(projectService.findAll(type));
+    }
+
+    @AdminOnly
+    @PutMapping("/order")
+    public ResponseEntity<Void> reorder(@Valid @RequestBody ProjectOrderRequestDto requestDto) {
+        projectService.reorder(requestDto.getIds());
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}")

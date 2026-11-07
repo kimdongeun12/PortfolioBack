@@ -50,7 +50,7 @@ app:
     jwt-secret: ${JWT_SECRET:}
     token-valid-hours: ${ADMIN_TOKEN_HOURS:12}
     # 관리자 댓글에 표시할 닉네임
-    nickname: ${ADMIN_NICKNAME:작성자}
+    nickname: ${ADMIN_NICKNAME:rlo_orn}
     # 쿠키 옵션 — 운영(HTTPS)에서는 secure: true
     cookie-secure: ${ADMIN_COOKIE_SECURE:false}
     cookie-same-site: ${ADMIN_COOKIE_SAME_SITE:Lax}

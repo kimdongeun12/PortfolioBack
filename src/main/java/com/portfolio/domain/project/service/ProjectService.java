@@ -17,4 +17,6 @@ public interface ProjectService {
     ProjectResponseDto update(Long id, ProjectRequestDto requestDto);
 
     void delete(Long id);
+
+    void reorder(List<Long> ids);
 }

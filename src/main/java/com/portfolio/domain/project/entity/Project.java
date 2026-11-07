@@ -111,6 +111,10 @@ public class Project extends BaseTimeEntity {
         this.techStacks.addAll(techStacks);
     }
 
+    public void changeSortOrder(int sortOrder) {
+        this.sortOrder = sortOrder;
+    }
+
     public void delete() {
         this.isDeleted = true;
     }

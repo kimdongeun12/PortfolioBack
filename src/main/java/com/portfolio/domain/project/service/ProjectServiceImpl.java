@@ -15,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -79,6 +82,23 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public void delete(Long id) {
         getProject(id).delete();
+    }
+
+    @Override
+    @Transactional
+    public void reorder(List<Long> ids) {
+        Map<Long, Project> projects = new HashMap<>();
+        for (Project project : projectRepository.findAllById(ids)) {
+            if (!project.isDeleted()) {
+                projects.put(project.getId(), project);
+            }
+        }
+        if (projects.size() != new HashSet<>(ids).size()) {
+            throw new BadRequestException("정렬할 프로젝트 중 찾을 수 없는 항목이 있습니다.");
+        }
+        for (int i = 0; i < ids.size(); i++) {
+            projects.get(ids.get(i)).changeSortOrder(i + 1);
+        }
     }
 
     private Project getProject(Long id) {
