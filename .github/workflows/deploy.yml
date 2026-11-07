@@ -1,0 +1,91 @@
+name: Deploy API to EC2
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-api
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      EC2_HOST: ${{ secrets.EC2_HOST }}
+      APP_DIR: ${{ vars.APP_DIR || '/home/ubuntu/portfolio' }}
+      SERVICE_NAME: ${{ vars.SERVICE_NAME || 'portfolio' }}
+      HEALTH_URL: ${{ vars.HEALTH_URL || 'https://api.rloorn.com/api/projects' }}
+
+    steps:
+      - name: Check deploy settings
+        id: settings
+        run: |
+          if [ -z "$EC2_HOST" ]; then
+            echo "EC2_HOST secret is not set. Skipping deploy."
+            echo "ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ready=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: actions/checkout@v4
+        if: steps.settings.outputs.ready == 'true'
+
+      - uses: actions/setup-java@v4
+        if: steps.settings.outputs.ready == 'true'
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.settings.outputs.ready == 'true'
+
+      - name: Build jar
+        if: steps.settings.outputs.ready == 'true'
+        run: |
+          ./gradlew bootJar --no-daemon
+          cp "$(ls build/libs/*.jar | grep -v plain | head -n 1)" app.jar
+
+      - name: Upload jar
+        if: steps.settings.outputs.ready == 'true'
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          source: app.jar
+          target: ${{ env.APP_DIR }}/release
+
+      - name: Restart service
+        if: steps.settings.outputs.ready == 'true'
+        uses: appleboy/ssh-action@v1.2.0
+        env:
+          APP_DIR: ${{ env.APP_DIR }}
+          SERVICE_NAME: ${{ env.SERVICE_NAME }}
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          envs: APP_DIR,SERVICE_NAME
+          script: |
+            set -e
+            cd "$APP_DIR"
+            if [ -f app.jar ]; then cp app.jar app.jar.bak; fi
+            mv release/app.jar app.jar
+            sudo systemctl restart "$SERVICE_NAME"
+            sleep 5
+            sudo systemctl is-active "$SERVICE_NAME"
+
+      - name: Health check
+        if: steps.settings.outputs.ready == 'true'
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fsS -o /dev/null "$HEALTH_URL"; then
+              echo "API is up"
+              exit 0
+            fi
+            sleep 5
+          done
+          echo "API did not respond in time: $HEALTH_URL"
+          exit 1
