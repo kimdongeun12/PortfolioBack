@@ -1,6 +1,7 @@
 package com.portfolio.global.config;
 
 import com.portfolio.auth.AdminAuthInterceptor;
+import com.portfolio.global.revalidate.RevalidateInterceptor;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,6 +19,7 @@ import java.nio.file.Paths;
 public class WebConfig implements WebMvcConfigurer {
 
     private final AdminAuthInterceptor adminAuthInterceptor;
+    private final RevalidateInterceptor revalidateInterceptor;
 
     @Value("${app.cors.allowed-origins}")
     private String[] allowedOrigins;
@@ -42,6 +44,9 @@ public class WebConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(adminAuthInterceptor)
                 .addPathPatterns("/api/**");
+        registry.addInterceptor(revalidateInterceptor)
+                .addPathPatterns("/api/**")
+                .excludePathPatterns("/api/visits/**", "/api/visits", "/api/admin/login", "/api/admin/logout", "/api/images/**", "/api/images");
     }
 
     @Override
