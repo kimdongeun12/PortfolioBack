@@ -12,6 +12,7 @@ import com.portfolio.domain.comment.repository.CommentRepository;
 import com.portfolio.domain.like.entity.LikeTargetType;
 import com.portfolio.domain.like.repository.LikesRepository;
 import com.portfolio.domain.techstack.service.TechStackService;
+import com.portfolio.domain.visit.service.VisitService;
 import com.portfolio.global.common.PageResponseDto;
 import com.portfolio.global.exception.NotFoundException;
 
@@ -34,6 +35,7 @@ public class BlogServiceImpl implements BlogService {
     private final LikesRepository likesRepository;
     private final CommentRepository commentRepository;
     private final TechStackService techStackService;
+    private final VisitService visitService;
 
     @Override
     public PageResponseDto<BlogSummaryDto> findPublished(String tech, String q, Pageable pageable) {
@@ -65,7 +67,7 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = blogRepository.findByIdAndIsPublishedTrueAndIsDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("블로그 글을 찾을 수 없습니다. id=" + id));
         boolean liked = likesRepository.existsByTargetTypeAndTargetIdAndIpHash(LikeTargetType.BLOG, id, ipHash);
-        return new BlogResponseDto(blog, liked);
+        return new BlogResponseDto(blog, liked, visitService.countPageViews("/blog/" + id));
     }
 
     @Override

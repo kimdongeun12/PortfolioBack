@@ -16,6 +16,7 @@ public class BlogResponseDto {
     private final String content;
     private final String thumbnailUrl;
     private final int likeCount;
+    private final long viewCount;
     private final boolean liked;
     private final boolean published;
     private final List<String> techStacks;
@@ -24,11 +25,16 @@ public class BlogResponseDto {
     private final LocalDateTime updatedAt;
 
     public BlogResponseDto(Blog blog, boolean liked) {
+        this(blog, liked, 0L);
+    }
+
+    public BlogResponseDto(Blog blog, boolean liked, long viewCount) {
         this.id = blog.getId();
         this.title = blog.getTitle();
         this.content = blog.getContent();
         this.thumbnailUrl = blog.getThumbnailUrl();
         this.likeCount = blog.getLikeCount();
+        this.viewCount = viewCount;
         this.liked = liked;
         this.published = blog.isPublished();
         this.techStacks = blog.getTechStacks().stream()

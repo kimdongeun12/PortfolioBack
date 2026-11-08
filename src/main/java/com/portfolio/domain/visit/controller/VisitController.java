@@ -1,6 +1,8 @@
 package com.portfolio.domain.visit.controller;
 
 import com.portfolio.auth.AdminOnly;
+import com.portfolio.domain.visit.dto.VisitPageStatsResponseDto;
+import com.portfolio.domain.visit.dto.VisitRecordResponseDto;
 import com.portfolio.domain.visit.dto.VisitRequestDto;
 import com.portfolio.domain.visit.dto.VisitStatsResponseDto;
 import com.portfolio.domain.visit.service.VisitService;
@@ -24,9 +26,27 @@ public class VisitController {
     private final ClientInfoResolver clientInfoResolver;
 
     @PostMapping
-    public ResponseEntity<Void> record(@Valid @RequestBody VisitRequestDto requestDto, HttpServletRequest request) {
-        visitService.record(requestDto, clientInfoResolver.getIpHash(request), clientInfoResolver.getUserAgent(request));
+    public ResponseEntity<VisitRecordResponseDto> record(@Valid @RequestBody VisitRequestDto requestDto, HttpServletRequest request) {
+        Long id = visitService.record(requestDto, clientInfoResolver.getIpHash(request), clientInfoResolver.getUserAgent(request));
+        return ResponseEntity.ok(new VisitRecordResponseDto(id));
+    }
+
+    @PostMapping("/duration")
+    public ResponseEntity<Void> duration(@RequestParam Long id,
+                                         @RequestParam String sessionId,
+                                         @RequestParam int durationMs) {
+        visitService.updateDuration(id, sessionId, durationMs);
         return ResponseEntity.noContent().build();
+    }
+
+    @AdminOnly
+    @GetMapping("/pages")
+    public ResponseEntity<VisitPageStatsResponseDto> pages(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        LocalDate end = (to != null) ? to : LocalDate.now();
+        LocalDate start = (from != null) ? from : end.minusDays(29);
+        return ResponseEntity.ok(visitService.getPageStats(start, end));
     }
 
     @AdminOnly

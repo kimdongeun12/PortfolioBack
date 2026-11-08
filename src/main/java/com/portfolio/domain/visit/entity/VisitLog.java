@@ -36,6 +36,8 @@ public class VisitLog {
     @Column(columnDefinition = "CHAR(64)")
     private String ipHash;
 
+    private Integer durationMs;
+
     @CreatedDate
     @Column(nullable = false, updatable = false)
     private LocalDateTime visitedAt;
@@ -47,5 +49,11 @@ public class VisitLog {
         this.referrer = referrer;
         this.userAgent = userAgent;
         this.ipHash = ipHash;
+    }
+
+    public void updateDuration(int durationMs) {
+        if (this.durationMs == null || durationMs > this.durationMs) {
+            this.durationMs = durationMs;
+        }
     }
 }
