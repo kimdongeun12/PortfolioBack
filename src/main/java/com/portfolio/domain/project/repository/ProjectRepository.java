@@ -1,5 +1,7 @@
 package com.portfolio.domain.project.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import com.portfolio.domain.project.entity.Project;
 import com.portfolio.domain.project.entity.ProjectType;
 
@@ -13,6 +15,8 @@ public interface ProjectRepository extends JpaRepository<Project, Long> {
     List<Project> findAllByIsDeletedFalseOrderByIsPinnedDescSortOrderAscStartDateDesc();
 
     List<Project> findAllByTypeAndIsDeletedFalseOrderByIsPinnedDescSortOrderAscStartDateDesc(ProjectType type);
+
+    Page<Project> findAllByIsDeletedFalse(Pageable pageable);
 
     Optional<Project> findByIdAndIsDeletedFalse(Long id);
 

@@ -1,5 +1,6 @@
 package com.portfolio.domain.blog.controller;
 
+import com.portfolio.domain.blog.dto.BlogOverviewDto;
 import com.portfolio.auth.AdminOnly;
 import com.portfolio.domain.blog.dto.BlogRequestDto;
 import com.portfolio.domain.blog.dto.BlogResponseDto;
@@ -34,8 +35,14 @@ public class BlogController {
     @GetMapping
     public ResponseEntity<PageResponseDto<BlogSummaryDto>> findAll(
             @RequestParam(required = false) String tech,
+            @RequestParam(required = false) String q,
             @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(blogService.findPublished(tech, pageable));
+        return ResponseEntity.ok(blogService.findPublished(tech, q, pageable));
+    }
+
+    @GetMapping("/overview")
+    public ResponseEntity<BlogOverviewDto> overview() {
+        return ResponseEntity.ok(blogService.getOverview());
     }
 
     @GetMapping("/{id}")

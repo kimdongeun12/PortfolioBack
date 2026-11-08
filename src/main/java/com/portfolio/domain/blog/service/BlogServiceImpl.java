@@ -1,5 +1,7 @@
 package com.portfolio.domain.blog.service;
 
+import com.portfolio.domain.blog.dto.BlogOverviewDto;
+import java.util.Locale;
 import com.portfolio.domain.blog.dto.BlogRequestDto;
 import com.portfolio.domain.blog.dto.BlogResponseDto;
 import com.portfolio.domain.blog.dto.BlogSummaryDto;
@@ -34,12 +36,28 @@ public class BlogServiceImpl implements BlogService {
     private final TechStackService techStackService;
 
     @Override
-    public PageResponseDto<BlogSummaryDto> findPublished(String tech, Pageable pageable) {
-        Page<Blog> page = (tech == null || tech.isBlank())
+    public PageResponseDto<BlogSummaryDto> findPublished(String tech, String q, Pageable pageable) {
+        String techName = (tech == null || tech.isBlank()) ? null : tech.trim();
+        String keyword = (q == null || q.isBlank()) ? null : "%" + escapeLike(q.trim().toLowerCase(Locale.ROOT)) + "%";
+        Page<Blog> page = (techName == null && keyword == null)
                 ? blogRepository.findByIsPublishedTrueAndIsDeletedFalse(pageable)
-                : blogRepository.findDistinctByIsPublishedTrueAndIsDeletedFalseAndTechStacks_Name(tech.trim(), pageable);
+                : blogRepository.searchPublished(techName, keyword, pageable);
         Map<Long, Long> commentCounts = countComments(page.getContent());
         return new PageResponseDto<>(page, blog -> new BlogSummaryDto(blog, commentCounts.getOrDefault(blog.getId(), 0L)));
+    }
+
+    @Override
+    public BlogOverviewDto getOverview() {
+        List<Long> ids = blogRepository.findPublishedIds();
+        long comments = ids.isEmpty() ? 0L : commentRepository.countByTargetIds(CommentTargetType.BLOG, ids);
+        List<String> tags = blogRepository.findPublishedTechNames().stream()
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .toList();
+        return new BlogOverviewDto(ids.size(), blogRepository.sumPublishedLikeCount(), comments, tags);
+    }
+
+    private static String escapeLike(String value) {
+        return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 
     @Override

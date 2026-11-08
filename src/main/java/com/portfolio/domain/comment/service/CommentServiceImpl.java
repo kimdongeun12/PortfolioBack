@@ -1,5 +1,12 @@
 package com.portfolio.domain.comment.service;
 
+import com.portfolio.domain.comment.dto.CommentPageResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import com.portfolio.domain.blog.repository.BlogRepository;
 import com.portfolio.domain.comment.dto.CommentCreateRequestDto;
 import com.portfolio.domain.comment.dto.CommentResponseDto;
@@ -34,6 +41,8 @@ public class CommentServiceImpl implements CommentService {
     private final PasswordEncoder passwordEncoder;
 
     private static final Long GUEST_TARGET_ID = 1L;
+    private static final int MAX_PAGE_SIZE = 50;
+    private static final ZoneId SERVICE_ZONE = ZoneId.of("Asia/Seoul");
 
     @Value("${app.admin.nickname}")
     private String adminNickname;
@@ -64,6 +73,37 @@ public class CommentServiceImpl implements CommentService {
             result.add(new CommentResponseDto(comment, replies));
         }
         return result;
+    }
+
+    @Override
+    public CommentPageResponseDto findThreadPage(CommentTargetType targetType, Long targetId, int page, int size) {
+        validateTarget(targetType, targetId);
+
+        Pageable pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), MAX_PAGE_SIZE));
+        Page<Comment> threads = commentRepository.findThreads(targetType, targetId, pageable);
+
+        List<Long> threadIds = threads.getContent().stream().map(Comment::getId).toList();
+        Map<Long, List<CommentResponseDto>> repliesByParent = new LinkedHashMap<>();
+        if (!threadIds.isEmpty()) {
+            for (Comment reply : commentRepository.findByParentIdInAndIsDeletedFalseOrderByCreatedAtAscIdAsc(threadIds)) {
+                repliesByParent.computeIfAbsent(reply.getParentId(), key -> new ArrayList<>())
+                        .add(new CommentResponseDto(reply));
+            }
+        }
+
+        List<CommentResponseDto> content = threads.getContent().stream()
+                .map(comment -> new CommentResponseDto(comment, repliesByParent.getOrDefault(comment.getId(), List.of())))
+                .toList();
+
+        LocalDateTime todayStart = LocalDate.now(SERVICE_ZONE).atStartOfDay(SERVICE_ZONE)
+                .withZoneSameInstant(ZoneId.systemDefault())
+                .toLocalDateTime();
+        long totalCount = commentRepository.countByTargetTypeAndTargetIdAndIsDeletedFalse(targetType, targetId);
+        long todayCount = commentRepository.countByTargetTypeAndTargetIdAndIsDeletedFalseAndCreatedAtGreaterThanEqual(
+                targetType, targetId, todayStart);
+
+        return new CommentPageResponseDto(content, threads.getNumber(), threads.getSize(), threads.getTotalElements(),
+                threads.getTotalPages(), threads.isLast(), totalCount, todayCount);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.portfolio.domain.comment.controller;
 
+import com.portfolio.domain.comment.dto.CommentPageResponseDto;
 import com.portfolio.domain.comment.dto.CommentCreateRequestDto;
 import com.portfolio.domain.comment.dto.CommentDeleteRequestDto;
 import com.portfolio.domain.comment.dto.CommentResponseDto;
@@ -34,6 +35,14 @@ public class CommentController {
     private final LikeService likeService;
     private final ClientInfoResolver clientInfoResolver;
     private final RateLimiter rateLimiter;
+
+    @GetMapping("/page")
+    public ResponseEntity<CommentPageResponseDto> findThreadPage(@RequestParam CommentTargetType targetType,
+                                                                 @RequestParam Long targetId,
+                                                                 @RequestParam(defaultValue = "0") int page,
+                                                                 @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(commentService.findThreadPage(targetType, targetId, page, size));
+    }
 
     @GetMapping
     public ResponseEntity<List<CommentResponseDto>> findByTarget(@RequestParam CommentTargetType targetType,

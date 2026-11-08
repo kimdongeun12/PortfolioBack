@@ -1,5 +1,6 @@
 package com.portfolio.domain.blog.service;
 
+import com.portfolio.domain.blog.dto.BlogOverviewDto;
 import com.portfolio.domain.blog.dto.BlogRequestDto;
 import com.portfolio.domain.blog.dto.BlogResponseDto;
 import com.portfolio.domain.blog.dto.BlogSummaryDto;
@@ -9,7 +10,9 @@ import org.springframework.data.domain.Pageable;
 
 public interface BlogService {
 
-    PageResponseDto<BlogSummaryDto> findPublished(String tech, Pageable pageable);
+    PageResponseDto<BlogSummaryDto> findPublished(String tech, String q, Pageable pageable);
+
+    BlogOverviewDto getOverview();
 
     BlogResponseDto findPublishedById(Long id, String ipHash);
 

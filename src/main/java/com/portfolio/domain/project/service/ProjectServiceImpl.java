@@ -1,5 +1,9 @@
 package com.portfolio.domain.project.service;
 
+import com.portfolio.global.common.PageResponseDto;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import com.portfolio.domain.experience.entity.Experience;
 import com.portfolio.domain.experience.repository.ExperienceRepository;
 import com.portfolio.domain.project.dto.ProjectRequestDto;
@@ -24,6 +28,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ProjectServiceImpl implements ProjectService {
+
+    private static final int MAX_PAGE_SIZE = 50;
 
     private final ProjectRepository projectRepository;
     private final ExperienceRepository experienceRepository;
@@ -82,6 +88,13 @@ public class ProjectServiceImpl implements ProjectService {
     @Transactional
     public void delete(Long id) {
         getProject(id).delete();
+    }
+
+    @Override
+    public PageResponseDto<ProjectResponseDto> findPage(int page, int size) {
+        Sort sort = Sort.by(Sort.Order.desc("isPinned"), Sort.Order.asc("sortOrder"), Sort.Order.desc("startDate"));
+        Pageable pageable = PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), MAX_PAGE_SIZE), sort);
+        return new PageResponseDto<>(projectRepository.findAllByIsDeletedFalse(pageable), ProjectResponseDto::new);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.portfolio.domain.project.controller;
 
+import com.portfolio.global.common.PageResponseDto;
 import com.portfolio.auth.AdminOnly;
 import com.portfolio.domain.project.dto.ProjectOrderRequestDto;
 import com.portfolio.domain.project.dto.ProjectRequestDto;
@@ -25,6 +26,12 @@ public class ProjectController {
     @GetMapping
     public ResponseEntity<List<ProjectResponseDto>> findAll(@RequestParam(required = false) ProjectType type) {
         return ResponseEntity.ok(projectService.findAll(type));
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<PageResponseDto<ProjectResponseDto>> findPage(@RequestParam(defaultValue = "0") int page,
+                                                                        @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(projectService.findPage(page, size));
     }
 
     @AdminOnly

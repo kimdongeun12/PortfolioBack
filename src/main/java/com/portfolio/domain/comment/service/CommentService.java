@@ -1,5 +1,6 @@
 package com.portfolio.domain.comment.service;
 
+import com.portfolio.domain.comment.dto.CommentPageResponseDto;
 import com.portfolio.domain.comment.dto.CommentCreateRequestDto;
 import com.portfolio.domain.comment.dto.CommentResponseDto;
 import com.portfolio.domain.comment.entity.CommentTargetType;
@@ -9,6 +10,8 @@ import java.util.List;
 public interface CommentService {
 
     List<CommentResponseDto> findByTarget(CommentTargetType targetType, Long targetId);
+
+    CommentPageResponseDto findThreadPage(CommentTargetType targetType, Long targetId, int page, int size);
 
     Long create(CommentCreateRequestDto requestDto);
 
