@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -40,6 +41,9 @@ public class Blog extends BaseTimeEntity {
     @Column(nullable = false)
     private boolean isDeleted;
 
+    @Column(nullable = false)
+    private LocalDateTime publishedAt;
+
     @ManyToMany
     @JoinTable(
             name = "blog_tech",
@@ -49,18 +53,22 @@ public class Blog extends BaseTimeEntity {
     private Set<TechStack> techStacks = new LinkedHashSet<>();
 
     @Builder
-    public Blog(String title, String content, String thumbnailUrl, boolean isPublished) {
+    public Blog(String title, String content, String thumbnailUrl, boolean isPublished, LocalDateTime publishedAt) {
         this.title = title;
         this.content = content;
         this.thumbnailUrl = thumbnailUrl;
         this.isPublished = isPublished;
+        this.publishedAt = publishedAt != null ? publishedAt : LocalDateTime.now();
     }
 
-    public void update(String title, String content, String thumbnailUrl, boolean isPublished) {
+    public void update(String title, String content, String thumbnailUrl, boolean isPublished, LocalDateTime publishedAt) {
         this.title = title;
         this.content = content;
         this.thumbnailUrl = thumbnailUrl;
         this.isPublished = isPublished;
+        if (publishedAt != null) {
+            this.publishedAt = publishedAt;
+        }
     }
 
     public void changeTechStacks(Set<TechStack> techStacks) {

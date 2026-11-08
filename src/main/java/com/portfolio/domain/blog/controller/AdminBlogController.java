@@ -23,7 +23,7 @@ public class AdminBlogController {
 
     @GetMapping
     public ResponseEntity<PageResponseDto<BlogSummaryDto>> findAll(
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 20, sort = "publishedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(blogService.findAllForAdmin(pageable));
     }
 

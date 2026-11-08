@@ -36,7 +36,7 @@ public class BlogController {
     public ResponseEntity<PageResponseDto<BlogSummaryDto>> findAll(
             @RequestParam(required = false) String tech,
             @RequestParam(required = false) String q,
-            @PageableDefault(size = 10, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+            @PageableDefault(size = 10, sort = "publishedAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(blogService.findPublished(tech, q, pageable));
     }
 

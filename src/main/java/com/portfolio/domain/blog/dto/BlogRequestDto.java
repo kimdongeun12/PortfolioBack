@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,6 +27,8 @@ public class BlogRequestDto {
 
     private boolean published = true;
 
+    private LocalDateTime publishedAt;
+
     @Size(max = 30, message = "기술 스택은 30개 이하로 입력하세요.")
     private List<String> techStacks = new ArrayList<>();
 
@@ -35,6 +38,7 @@ public class BlogRequestDto {
                 .content(content)
                 .thumbnailUrl(thumbnailUrl)
                 .isPublished(published)
+                .publishedAt(publishedAt)
                 .build();
     }
 }

@@ -19,6 +19,7 @@ public class BlogResponseDto {
     private final boolean liked;
     private final boolean published;
     private final List<String> techStacks;
+    private final LocalDateTime publishedAt;
     private final LocalDateTime createdAt;
     private final LocalDateTime updatedAt;
 
@@ -34,6 +35,7 @@ public class BlogResponseDto {
                 .map(TechStack::getName)
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .toList();
+        this.publishedAt = blog.getPublishedAt();
         this.createdAt = blog.getCreatedAt();
         this.updatedAt = blog.getUpdatedAt();
     }

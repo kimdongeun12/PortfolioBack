@@ -20,6 +20,7 @@ public class BlogSummaryDto {
     private final int likeCount;
     private final boolean published;
     private final List<String> techStacks;
+    private final LocalDateTime publishedAt;
     private final LocalDateTime createdAt;
     private final long commentCount;
 
@@ -38,6 +39,7 @@ public class BlogSummaryDto {
                 .map(TechStack::getName)
                 .sorted(String.CASE_INSENSITIVE_ORDER)
                 .toList();
+        this.publishedAt = blog.getPublishedAt();
         this.createdAt = blog.getCreatedAt();
         this.commentCount = commentCount;
     }

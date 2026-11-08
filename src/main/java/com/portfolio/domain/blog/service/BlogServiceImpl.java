@@ -94,7 +94,8 @@ public class BlogServiceImpl implements BlogService {
                 requestDto.getTitle(),
                 requestDto.getContent(),
                 requestDto.getThumbnailUrl(),
-                requestDto.isPublished()
+                requestDto.isPublished(),
+                requestDto.getPublishedAt()
         );
         blog.changeTechStacks(techStackService.resolve(requestDto.getTechStacks()));
         return new BlogResponseDto(blog, false);
