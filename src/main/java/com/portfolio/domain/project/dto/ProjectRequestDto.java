@@ -40,6 +40,15 @@ public class ProjectRequestDto {
     @Size(max = 500, message = "썸네일 URL은 500자 이하로 입력하세요.")
     private String thumbnailUrl;
 
+    @Size(max = 40, message = "커버 라벨은 40자 이하로 입력하세요.")
+    private String coverLabel;
+
+    @Size(max = 60, message = "커버 제목은 60자 이하로 입력하세요.")
+    private String coverTitle;
+
+    @Size(max = 100, message = "커버 보조 문구는 100자 이하로 입력하세요.")
+    private String coverSub;
+
     private boolean pinned;
 
     private int sortOrder;

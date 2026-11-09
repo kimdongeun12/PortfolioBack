@@ -27,6 +27,9 @@ public class ProjectResponseDto {
     private final String content;
     private final ProjectType type;
     private final String thumbnailUrl;
+    private final String coverLabel;
+    private final String coverTitle;
+    private final String coverSub;
     private final boolean pinned;
     private final int sortOrder;
     private final LocalDate startDate;
@@ -50,6 +53,9 @@ public class ProjectResponseDto {
         this.content = project.getContent();
         this.type = project.getType();
         this.thumbnailUrl = project.getThumbnailUrl();
+        this.coverLabel = project.getCoverLabel();
+        this.coverTitle = project.getCoverTitle();
+        this.coverSub = project.getCoverSub();
         this.pinned = project.isPinned();
         this.sortOrder = project.getSortOrder();
         this.startDate = project.getStartDate();

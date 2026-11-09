@@ -56,6 +56,7 @@ public class ProjectServiceImpl implements ProjectService {
         validatePeriod(requestDto);
         Experience experience = getExperienceOrNull(requestDto.getExperienceId());
         Project project = requestDto.toEntity(experience);
+        applyCover(project, requestDto);
         project.changeTechStacks(techStackService.resolve(requestDto.getTechStacks()));
         return projectRepository.save(project).getId();
     }
@@ -80,6 +81,7 @@ public class ProjectServiceImpl implements ProjectService {
                 requestDto.getStartDate(),
                 requestDto.getEndDate()
         );
+        applyCover(project, requestDto);
         project.changeTechStacks(techStackService.resolve(requestDto.getTechStacks()));
         return new ProjectResponseDto(project);
     }
@@ -132,5 +134,17 @@ public class ProjectServiceImpl implements ProjectService {
                 && requestDto.getEndDate().isBefore(requestDto.getStartDate())) {
             throw new BadRequestException("종료일은 시작일보다 빠를 수 없습니다.");
         }
+    }
+
+    private void applyCover(Project project, ProjectRequestDto requestDto) {
+        project.changeCover(
+                blankToNull(requestDto.getCoverLabel()),
+                blankToNull(requestDto.getCoverTitle()),
+                blankToNull(requestDto.getCoverSub())
+        );
+    }
+
+    private String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
     }
 }

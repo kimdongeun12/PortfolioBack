@@ -50,6 +50,15 @@ public class Project extends BaseTimeEntity {
     @Column(length = 500)
     private String thumbnailUrl;
 
+    @Column(length = 40)
+    private String coverLabel;
+
+    @Column(length = 60)
+    private String coverTitle;
+
+    @Column(length = 100)
+    private String coverSub;
+
     @Column(nullable = false)
     private boolean isPinned;
 
@@ -104,6 +113,12 @@ public class Project extends BaseTimeEntity {
         this.sortOrder = sortOrder;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void changeCover(String coverLabel, String coverTitle, String coverSub) {
+        this.coverLabel = coverLabel;
+        this.coverTitle = coverTitle;
+        this.coverSub = coverSub;
     }
 
     public void changeTechStacks(Set<TechStack> techStacks) {
