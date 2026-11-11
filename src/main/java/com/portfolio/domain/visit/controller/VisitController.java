@@ -5,6 +5,7 @@ import com.portfolio.domain.visit.dto.VisitPageStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitRecordResponseDto;
 import com.portfolio.domain.visit.dto.VisitRequestDto;
 import com.portfolio.domain.visit.dto.VisitStatsResponseDto;
+import com.portfolio.domain.visit.dto.VisitTrendResponseDto;
 import com.portfolio.domain.visit.service.VisitService;
 import com.portfolio.global.util.ClientInfoResolver;
 
@@ -57,5 +58,17 @@ public class VisitController {
         LocalDate end = (to != null) ? to : LocalDate.now();
         LocalDate start = (from != null) ? from : end.minusDays(29);
         return ResponseEntity.ok(visitService.getStats(start, end));
+    }
+
+    @AdminOnly
+    @GetMapping("/trend")
+    public ResponseEntity<VisitTrendResponseDto> trend(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(defaultValue = "day") String unit,
+            @RequestParam(required = false) String path) {
+        LocalDate end = (to != null) ? to : LocalDate.now();
+        LocalDate start = (from != null) ? from : end.minusDays(29);
+        return ResponseEntity.ok(visitService.getTrend(start, end, unit, path));
     }
 }

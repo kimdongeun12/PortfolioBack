@@ -7,9 +7,11 @@ import com.portfolio.domain.project.repository.ProjectRepository;
 import com.portfolio.domain.visit.dto.VisitPageStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitRequestDto;
 import com.portfolio.domain.visit.dto.VisitStatsResponseDto;
+import com.portfolio.domain.visit.dto.VisitTrendResponseDto;
 import com.portfolio.domain.visit.entity.VisitLog;
 import com.portfolio.domain.visit.repository.DailyVisitStat;
 import com.portfolio.domain.visit.repository.PageVisitStat;
+import com.portfolio.domain.visit.repository.PeriodVisitStat;
 import com.portfolio.domain.visit.repository.VisitLogRepository;
 import com.portfolio.global.exception.BadRequestException;
 import com.portfolio.global.util.ClientInfoResolver;
@@ -20,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -189,6 +192,43 @@ public class VisitServiceImpl implements VisitService {
                 visitLogRepository.countVisitors(todayStart, todayEnd),
                 daily
         );
+    }
+
+    @Override
+    public VisitTrendResponseDto getTrend(LocalDate from, LocalDate to, String unit, String path) {
+        validateRange(from, to);
+        boolean monthly = "month".equals(unit);
+        String target = blankToNull(path == null ? null : path.trim());
+
+        Map<String, PeriodVisitStat> statByPeriod = new HashMap<>();
+        for (PeriodVisitStat stat : visitLogRepository.findPeriodStats(
+                monthly ? "%Y-%m" : "%Y-%m-%d", from.atStartOfDay(), to.plusDays(1).atStartOfDay(), target)) {
+            statByPeriod.put(stat.getPeriod(), stat);
+        }
+
+        List<String> keys = new ArrayList<>();
+        if (monthly) {
+            for (YearMonth month = YearMonth.from(from); !month.isAfter(YearMonth.from(to)); month = month.plusMonths(1)) {
+                keys.add(month.toString());
+            }
+        } else {
+            for (LocalDate date = from; !date.isAfter(to); date = date.plusDays(1)) {
+                keys.add(date.toString());
+            }
+        }
+
+        List<VisitTrendResponseDto.Period> periods = new ArrayList<>();
+        for (String key : keys) {
+            PeriodVisitStat stat = statByPeriod.get(key);
+            periods.add(new VisitTrendResponseDto.Period(
+                    key,
+                    stat != null && stat.getPageViews() != null ? stat.getPageViews() : 0L,
+                    stat != null && stat.getVisitors() != null ? stat.getVisitors() : 0L,
+                    stat != null ? stat.getAvgDurationMs() : null,
+                    stat != null && stat.getMeasured() != null ? stat.getMeasured() : 0L
+            ));
+        }
+        return new VisitTrendResponseDto(from, to, monthly ? "month" : "day", target, periods);
     }
 
     private String blankToNull(String value) {

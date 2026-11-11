@@ -46,6 +46,23 @@ public interface VisitLogRepository extends JpaRepository<VisitLog, Long> {
             """, nativeQuery = true)
     List<DailyVisitStat> findDailyStats(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
 
+    @Query(value = """
+            SELECT DATE_FORMAT(visited_at, :format)                 AS period,
+                   COUNT(*)                                         AS pageViews,
+                   COUNT(DISTINCT ip_hash)                          AS visitors,
+                   CAST(AVG(duration_ms) AS SIGNED)                 AS avgDurationMs,
+                   SUM(CASE WHEN duration_ms IS NULL THEN 0 ELSE 1 END) AS measured
+            FROM visit_log
+            WHERE visited_at >= :from AND visited_at < :to
+              AND (:path IS NULL OR path = :path)
+            GROUP BY 1
+            ORDER BY 1
+            """, nativeQuery = true)
+    List<PeriodVisitStat> findPeriodStats(@Param("format") String format,
+                                          @Param("from") LocalDateTime from,
+                                          @Param("to") LocalDateTime to,
+                                          @Param("path") String path);
+
     @Query(value = "SELECT COUNT(*) FROM visit_log WHERE visited_at >= :from AND visited_at < :to",
             nativeQuery = true)
     long countPageViews(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
