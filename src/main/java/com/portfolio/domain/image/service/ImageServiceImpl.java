@@ -11,6 +11,7 @@ import com.portfolio.global.exception.NotFoundException;
 import com.portfolio.global.util.ClientInfoResolver;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -104,6 +106,23 @@ public class ImageServiceImpl implements ImageService {
         Image image = imageRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new NotFoundException("이미지를 찾을 수 없습니다. id=" + id));
         image.delete();
+        deleteFile(image.getUrl());
+    }
+
+    private void deleteFile(String url) {
+        if (url == null || !url.startsWith(uploadUrlPrefix + "/")) {
+            return;
+        }
+        Path baseDir = Paths.get(uploadDir).toAbsolutePath().normalize();
+        Path file = baseDir.resolve(url.substring(uploadUrlPrefix.length() + 1)).normalize();
+        if (!file.startsWith(baseDir)) {
+            return;
+        }
+        try {
+            Files.deleteIfExists(file);
+        } catch (IOException e) {
+            log.warn("이미지 파일 삭제 실패: {}", e.getMessage());
+        }
     }
 
     private void validateTarget(ImageTargetType targetType, Long targetId) {

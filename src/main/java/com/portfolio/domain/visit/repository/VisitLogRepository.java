@@ -3,6 +3,7 @@ package com.portfolio.domain.visit.repository;
 import com.portfolio.domain.visit.entity.VisitLog;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -52,4 +53,8 @@ public interface VisitLogRepository extends JpaRepository<VisitLog, Long> {
     @Query(value = "SELECT COUNT(DISTINCT ip_hash) FROM visit_log WHERE visited_at >= :from AND visited_at < :to",
             nativeQuery = true)
     long countVisitors(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    @Modifying
+    @Query(value = "DELETE FROM visit_log WHERE visited_at < :before", nativeQuery = true)
+    int deleteOlderThan(@Param("before") LocalDateTime before);
 }
