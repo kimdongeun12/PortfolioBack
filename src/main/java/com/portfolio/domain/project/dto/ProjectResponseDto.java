@@ -30,6 +30,7 @@ public class ProjectResponseDto {
     private final String coverLabel;
     private final String coverTitle;
     private final String coverSub;
+    private final String periodLabel;
     private final boolean pinned;
     private final int sortOrder;
     private final LocalDate startDate;
@@ -56,6 +57,7 @@ public class ProjectResponseDto {
         this.coverLabel = project.getCoverLabel();
         this.coverTitle = project.getCoverTitle();
         this.coverSub = project.getCoverSub();
+        this.periodLabel = project.getPeriodLabel();
         this.pinned = project.isPinned();
         this.sortOrder = project.getSortOrder();
         this.startDate = project.getStartDate();

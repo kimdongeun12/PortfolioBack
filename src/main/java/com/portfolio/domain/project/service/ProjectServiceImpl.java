@@ -142,6 +142,7 @@ public class ProjectServiceImpl implements ProjectService {
                 blankToNull(requestDto.getCoverTitle()),
                 blankToNull(requestDto.getCoverSub())
         );
+        project.changePeriodLabel(blankToNull(requestDto.getPeriodLabel()));
     }
 
     private String blankToNull(String value) {

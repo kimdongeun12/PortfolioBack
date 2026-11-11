@@ -49,6 +49,9 @@ public class ProjectRequestDto {
     @Size(max = 100, message = "커버 보조 문구는 100자 이하로 입력하세요.")
     private String coverSub;
 
+    @Size(max = 40, message = "기간 표기는 40자 이하로 입력하세요.")
+    private String periodLabel;
+
     private boolean pinned;
 
     private int sortOrder;

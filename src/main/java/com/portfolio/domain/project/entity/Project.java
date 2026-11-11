@@ -59,6 +59,9 @@ public class Project extends BaseTimeEntity {
     @Column(length = 100)
     private String coverSub;
 
+    @Column(length = 40)
+    private String periodLabel;
+
     @Column(nullable = false)
     private boolean isPinned;
 
@@ -113,6 +116,10 @@ public class Project extends BaseTimeEntity {
         this.sortOrder = sortOrder;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public void changePeriodLabel(String periodLabel) {
+        this.periodLabel = periodLabel;
     }
 
     public void changeCover(String coverLabel, String coverTitle, String coverSub) {
