@@ -4,6 +4,7 @@ import com.portfolio.domain.visit.dto.VisitRequestDto;
 import com.portfolio.domain.visit.dto.VisitPageStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitTrendResponseDto;
+import com.portfolio.domain.visit.dto.VisitorTimelineResponseDto;
 
 import java.time.LocalDate;
 
@@ -20,4 +21,8 @@ public interface VisitService {
     VisitStatsResponseDto getStats(LocalDate from, LocalDate to);
 
     VisitTrendResponseDto getTrend(LocalDate from, LocalDate to, String unit, String path);
+
+    VisitorTimelineResponseDto getVisitors(LocalDate from, LocalDate to);
+
+    void updateVisitorLabel(String ipHash, String label);
 }

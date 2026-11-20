@@ -17,6 +17,8 @@ public interface VisitLogRepository extends JpaRepository<VisitLog, Long> {
 
     long countByPath(String path);
 
+    List<VisitLog> findTop3000ByVisitedAtGreaterThanEqualAndVisitedAtLessThanOrderByVisitedAtDesc(LocalDateTime from, LocalDateTime to);
+
     @Query(value = """
             SELECT path                                         AS path,
                    COUNT(*)                                     AS pageViews,

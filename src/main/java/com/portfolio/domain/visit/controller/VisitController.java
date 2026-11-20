@@ -1,11 +1,15 @@
 package com.portfolio.domain.visit.controller;
 
+import com.portfolio.auth.AdminAuthService;
+import com.portfolio.auth.AdminCookieManager;
 import com.portfolio.auth.AdminOnly;
 import com.portfolio.domain.visit.dto.VisitPageStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitRecordResponseDto;
 import com.portfolio.domain.visit.dto.VisitRequestDto;
 import com.portfolio.domain.visit.dto.VisitStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitTrendResponseDto;
+import com.portfolio.domain.visit.dto.VisitorLabelRequestDto;
+import com.portfolio.domain.visit.dto.VisitorTimelineResponseDto;
 import com.portfolio.domain.visit.service.VisitService;
 import com.portfolio.global.util.ClientInfoResolver;
 
@@ -25,9 +29,15 @@ public class VisitController {
 
     private final VisitService visitService;
     private final ClientInfoResolver clientInfoResolver;
+    private final AdminCookieManager adminCookieManager;
+    private final AdminAuthService adminAuthService;
 
     @PostMapping
     public ResponseEntity<VisitRecordResponseDto> record(@Valid @RequestBody VisitRequestDto requestDto, HttpServletRequest request) {
+        String token = adminCookieManager.resolveToken(request);
+        if (token != null && adminAuthService.isAuthenticated(token)) {
+            return ResponseEntity.ok(new VisitRecordResponseDto(null));
+        }
         Long id = visitService.record(requestDto, clientInfoResolver.getIpHash(request), clientInfoResolver.getUserAgent(request));
         return ResponseEntity.ok(new VisitRecordResponseDto(id));
     }
@@ -70,5 +80,22 @@ public class VisitController {
         LocalDate end = (to != null) ? to : LocalDate.now();
         LocalDate start = (from != null) ? from : end.minusDays(29);
         return ResponseEntity.ok(visitService.getTrend(start, end, unit, path));
+    }
+
+    @AdminOnly
+    @GetMapping("/visitors")
+    public ResponseEntity<VisitorTimelineResponseDto> visitors(
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to) {
+        LocalDate end = (to != null) ? to : LocalDate.now();
+        LocalDate start = (from != null) ? from : end.minusDays(6);
+        return ResponseEntity.ok(visitService.getVisitors(start, end));
+    }
+
+    @AdminOnly
+    @PutMapping("/visitors/{ipHash}/label")
+    public ResponseEntity<Void> label(@PathVariable String ipHash, @Valid @RequestBody VisitorLabelRequestDto requestDto) {
+        visitService.updateVisitorLabel(ipHash, requestDto.getLabel());
+        return ResponseEntity.noContent().build();
     }
 }
