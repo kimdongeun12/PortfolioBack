@@ -50,6 +50,7 @@ public class VisitServiceImpl implements VisitService {
     private static final long MAX_HOURLY_DAYS = 7;
     private static final long MAX_VISITOR_DAYS = 31;
     private static final int VISITOR_LOG_LIMIT = 3000;
+    private static final int SUSPECT_MIN_PAGE_VIEWS = 3;
     private static final DateTimeFormatter HOUR_KEY = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:00");
     private static final int MAX_DURATION_MS = 30 * 60 * 1000;
     private static final long DURATION_UPDATE_HOURS = 6;
@@ -309,6 +310,8 @@ public class VisitServiceImpl implements VisitService {
                     UserAgentSummary.device(last.getUserAgent()),
                     UserAgentSummary.browser(last.getUserAgent()),
                     UserAgentSummary.os(last.getUserAgent()),
+                    last.getUserAgent(),
+                    visits.size() >= SUSPECT_MIN_PAGE_VIEWS && sessions == visits.size() && totalDuration == 0,
                     firstReferrer,
                     first.getVisitedAt(),
                     last.getVisitedAt(),

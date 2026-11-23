@@ -25,6 +25,8 @@ public class VisitorTimelineResponseDto {
         private final String device;
         private final String browser;
         private final String os;
+        private final String userAgent;
+        private final boolean suspected;
         private final String firstReferrer;
         private final LocalDateTime firstVisitedAt;
         private final LocalDateTime lastVisitedAt;
