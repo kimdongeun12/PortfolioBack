@@ -101,6 +101,7 @@ public class VisitServiceImpl implements VisitService {
                 .filter(log -> log.getSessionId().equals(sessionId))
                 .filter(log -> log.getVisitedAt() != null
                         && log.getVisitedAt().isAfter(LocalDateTime.now().minusHours(DURATION_UPDATE_HOURS)))
+                .filter(log -> log.getDurationMs() == null || log.getDurationMs() < Math.min(durationMs, MAX_DURATION_MS))
                 .ifPresent(log -> log.updateDuration(Math.min(durationMs, MAX_DURATION_MS)));
     }
 
