@@ -311,7 +311,8 @@ public class VisitServiceImpl implements VisitService {
                     UserAgentSummary.browser(last.getUserAgent()),
                     UserAgentSummary.os(last.getUserAgent()),
                     last.getUserAgent(),
-                    visits.size() >= SUSPECT_MIN_PAGE_VIEWS && sessions == visits.size() && totalDuration == 0,
+                    clientInfoResolver.isBot(last.getUserAgent())
+                            || (visits.size() >= SUSPECT_MIN_PAGE_VIEWS && sessions == visits.size() && totalDuration == 0),
                     firstReferrer,
                     first.getVisitedAt(),
                     last.getVisitedAt(),

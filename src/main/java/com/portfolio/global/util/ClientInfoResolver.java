@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 public class ClientInfoResolver {
 
     private static final Pattern BOT_PATTERN =
-            Pattern.compile(".*(bot|crawler|spider|slurp|headless|preview|curl|wget|python|dataprovider|facebookexternalhit|yeti|daumoa|kakaotalk-scrap|lighthouse|inspectiontool|go-http-client|okhttp|java/|node-fetch|axios|scrapy|claude/).*",
+            Pattern.compile(".*(bot|crawler|spider|slurp|headless|preview|curl|wget|python|dataprovider|facebookexternalhit|yeti|daumoa|kakaotalk-scrap|lighthouse|inspectiontool|go-http-client|okhttp|java/|node-fetch|axios|scrapy|claude/|googleother|google-safety|mediapartners-google|apis-google|feedfetcher-google|google-read-aloud).*",
                     Pattern.CASE_INSENSITIVE);
 
     private final String salt;
