@@ -30,8 +30,17 @@ public class VisitLog {
     @Column(length = 500)
     private String referrer;
 
-    @Column(length = 500)
-    private String userAgent;
+    @Column(length = 20)
+    private String device;
+
+    @Column(length = 20)
+    private String os;
+
+    @Column(length = 20)
+    private String browser;
+
+    @Column(nullable = false)
+    private boolean botLike;
 
     @Column(columnDefinition = "CHAR(64)")
     private String ipHash;
@@ -43,11 +52,13 @@ public class VisitLog {
     private LocalDateTime visitedAt;
 
     @Builder
-    public VisitLog(String sessionId, String path, String referrer, String userAgent, String ipHash) {
+    public VisitLog(String sessionId, String path, String referrer, String device, String os, String browser, String ipHash) {
         this.sessionId = sessionId;
         this.path = path;
         this.referrer = referrer;
-        this.userAgent = userAgent;
+        this.device = device;
+        this.os = os;
+        this.browser = browser;
         this.ipHash = ipHash;
     }
 

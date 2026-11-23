@@ -86,7 +86,9 @@ public class VisitServiceImpl implements VisitService {
                 .sessionId(requestDto.getSessionId())
                 .path(path)
                 .referrer(blankToNull(ClientInfoResolver.truncate(requestDto.getReferrer(), 500)))
-                .userAgent(userAgent)
+                .device(UserAgentSummary.device(userAgent))
+                .os(UserAgentSummary.os(userAgent))
+                .browser(UserAgentSummary.browser(userAgent))
                 .ipHash(ipHash)
                 .build();
         return visitLogRepository.save(visitLog).getId();
@@ -307,11 +309,10 @@ public class VisitServiceImpl implements VisitService {
                     entry.getKey().startsWith("s:") ? entry.getKey() : entry.getKey().substring(0, 8),
                     ipHash,
                     ipHash != null ? labels.get(ipHash) : null,
-                    UserAgentSummary.device(last.getUserAgent()),
-                    UserAgentSummary.browser(last.getUserAgent()),
-                    UserAgentSummary.os(last.getUserAgent()),
-                    last.getUserAgent(),
-                    clientInfoResolver.isBot(last.getUserAgent())
+                    orUnknown(last.getDevice()),
+                    orUnknown(last.getBrowser()),
+                    orUnknown(last.getOs()),
+                    visits.stream().anyMatch(VisitLog::isBotLike)
                             || (visits.size() >= SUSPECT_MIN_PAGE_VIEWS && sessions == visits.size() && totalDuration == 0),
                     firstReferrer,
                     first.getVisitedAt(),
@@ -364,6 +365,10 @@ public class VisitServiceImpl implements VisitService {
             labels.put(path, toLabel(path, blogTitles, projectTitles));
         }
         return labels;
+    }
+
+    private String orUnknown(String value) {
+        return value != null ? value : "알 수 없음";
     }
 
     private String toHost(String referrer) {
