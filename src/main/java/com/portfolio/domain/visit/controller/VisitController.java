@@ -7,6 +7,7 @@ import com.portfolio.domain.visit.dto.VisitPageStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitRecordResponseDto;
 import com.portfolio.domain.visit.dto.VisitRequestDto;
 import com.portfolio.domain.visit.dto.VisitStatsResponseDto;
+import com.portfolio.domain.visit.dto.VisitTotalResponseDto;
 import com.portfolio.domain.visit.dto.VisitTrendResponseDto;
 import com.portfolio.domain.visit.dto.VisitorLabelRequestDto;
 import com.portfolio.domain.visit.dto.VisitorTimelineResponseDto;
@@ -58,6 +59,11 @@ public class VisitController {
         LocalDate end = (to != null) ? to : LocalDate.now();
         LocalDate start = (from != null) ? from : end.minusDays(29);
         return ResponseEntity.ok(visitService.getPageStats(start, end));
+    }
+
+    @GetMapping("/total")
+    public ResponseEntity<VisitTotalResponseDto> total() {
+        return ResponseEntity.ok(visitService.getTotal());
     }
 
     @AdminOnly

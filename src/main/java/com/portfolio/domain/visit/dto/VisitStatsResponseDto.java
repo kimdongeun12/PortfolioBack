@@ -16,6 +16,8 @@ public class VisitStatsResponseDto {
     private final long totalVisitors;
     private final long todayPageViews;
     private final long todayVisitors;
+    private final long allTimePageViews;
+    private final long allTimeVisitors;
     private final List<Daily> daily;
 
     @Getter

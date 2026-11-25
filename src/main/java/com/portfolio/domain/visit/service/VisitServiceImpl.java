@@ -7,6 +7,7 @@ import com.portfolio.domain.project.repository.ProjectRepository;
 import com.portfolio.domain.visit.dto.VisitPageStatsResponseDto;
 import com.portfolio.domain.visit.dto.VisitRequestDto;
 import com.portfolio.domain.visit.dto.VisitStatsResponseDto;
+import com.portfolio.domain.visit.dto.VisitTotalResponseDto;
 import com.portfolio.domain.visit.dto.VisitTrendResponseDto;
 import com.portfolio.domain.visit.dto.VisitorTimelineResponseDto;
 import com.portfolio.domain.visit.entity.VisitLog;
@@ -14,6 +15,7 @@ import com.portfolio.domain.visit.entity.VisitorLabel;
 import com.portfolio.domain.visit.repository.DailyVisitStat;
 import com.portfolio.domain.visit.repository.PageVisitStat;
 import com.portfolio.domain.visit.repository.PeriodVisitStat;
+import com.portfolio.domain.visit.repository.VisitDailySummaryRepository;
 import com.portfolio.domain.visit.repository.VisitLogRepository;
 import com.portfolio.domain.visit.repository.VisitorLabelRepository;
 import com.portfolio.global.exception.BadRequestException;
@@ -67,6 +69,7 @@ public class VisitServiceImpl implements VisitService {
     private final BlogRepository blogRepository;
     private final ProjectRepository projectRepository;
     private final VisitorLabelRepository visitorLabelRepository;
+    private final VisitDailySummaryRepository visitDailySummaryRepository;
 
     @Override
     @Transactional
@@ -198,6 +201,7 @@ public class VisitServiceImpl implements VisitService {
 
         LocalDateTime todayStart = LocalDate.now().atStartOfDay();
         LocalDateTime todayEnd = todayStart.plusDays(1);
+        VisitTotalResponseDto total = getTotal();
 
         return new VisitStatsResponseDto(
                 from,
@@ -206,8 +210,45 @@ public class VisitServiceImpl implements VisitService {
                 visitLogRepository.countVisitors(start, end),
                 visitLogRepository.countPageViews(todayStart, todayEnd),
                 visitLogRepository.countVisitors(todayStart, todayEnd),
+                total.getTotalPageViews(),
+                total.getTotalVisitors(),
                 daily
         );
+    }
+
+    @Override
+    public VisitTotalResponseDto getTotal() {
+        LocalDate today = LocalDate.now();
+        LocalDateTime todayStart = today.atStartOfDay();
+        LocalDateTime todayEnd = todayStart.plusDays(1);
+        long todayPageViews = visitLogRepository.countHumanPageViews(todayStart, todayEnd);
+        long todayVisitors = visitLogRepository.countHumanVisitors(todayStart, todayEnd);
+        return new VisitTotalResponseDto(
+                visitDailySummaryRepository.sumPageViewsBefore(today) + todayPageViews,
+                visitDailySummaryRepository.sumVisitorsBefore(today) + todayVisitors,
+                todayVisitors
+        );
+    }
+
+    @Override
+    @Transactional
+    public void summarizeDaily() {
+        LocalDate today = LocalDate.now();
+        LocalDate last = visitDailySummaryRepository.findLastSummarizedBefore(today);
+        LocalDate from;
+        if (last != null) {
+            from = last.minusDays(1);
+        } else {
+            LocalDateTime first = visitLogRepository.findFirstVisitedAt();
+            if (first == null) {
+                return;
+            }
+            from = first.toLocalDate();
+        }
+        if (!from.isBefore(today)) {
+            return;
+        }
+        visitDailySummaryRepository.upsertRange(from.atStartOfDay(), today.atStartOfDay(), LocalDateTime.now());
     }
 
     @Override

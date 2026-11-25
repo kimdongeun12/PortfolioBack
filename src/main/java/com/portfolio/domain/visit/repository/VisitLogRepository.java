@@ -65,6 +65,17 @@ public interface VisitLogRepository extends JpaRepository<VisitLog, Long> {
                                           @Param("to") LocalDateTime to,
                                           @Param("path") String path);
 
+    @Query(value = "SELECT COUNT(*) FROM visit_log WHERE visited_at >= :from AND visited_at < :to AND bot_like = FALSE",
+            nativeQuery = true)
+    long countHumanPageViews(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    @Query(value = "SELECT COUNT(DISTINCT ip_hash) FROM visit_log WHERE visited_at >= :from AND visited_at < :to AND bot_like = FALSE",
+            nativeQuery = true)
+    long countHumanVisitors(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
+
+    @Query("select min(v.visitedAt) from VisitLog v")
+    LocalDateTime findFirstVisitedAt();
+
     @Query(value = "SELECT COUNT(*) FROM visit_log WHERE visited_at >= :from AND visited_at < :to",
             nativeQuery = true)
     long countPageViews(@Param("from") LocalDateTime from, @Param("to") LocalDateTime to);
